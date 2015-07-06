@@ -1,4 +1,5 @@
 var http = require('http'),
+https = require('https'),
 fs = require('fs');
 
 
@@ -43,6 +44,7 @@ var getSign = function() {
 //read about it : https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_1
 //
 var postR = function(param) {
+  var sign  = param.sign;
 
 /*
 send XML to wechat URL 'https://api.mch.weixin.qq.com/pay/unifiedorder'
@@ -84,6 +86,43 @@ use https://www.npmjs.com/package/xmlbuilder
       data: '<searchKey id="whatever"/>',
       headers: { "Content-Type": 'application/x-www-form-urlencoded' }
   })
+
+//example of request , but use https.request.
+
+var body = '<?xml version="1.0" encoding="utf-8"?>' +
+           '<soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">'+
+            '<soap12:Body>......</soap12:Body></soap12:Envelope>';
+
+var postRequest = {
+    host: "service.x.yyy.xa.asmx",
+    path: "/a.asmx",
+    port: 80,
+    method: "POST",
+    headers: {
+        'Cookie': "cookie",
+        'Content-Type': 'text/xml',
+        'Content-Length': Buffer.byteLength(body)
+    }
+};
+
+var buffer = "";
+
+var req = http.request( postRequest, function( res )    {
+
+   console.log( res.statusCode );
+   var buffer = "";
+   res.on( "data", function( data ) { buffer = buffer + data; } );
+   res.on( "end", function( data ) { console.log( buffer ); } );
+
+});
+
+req.on('error', function(e) {
+    console.log('problem with request: ' + e.message);
+});
+
+req.write( body );
+req.end();
+
 
 */
 //IF SUCCEESS respons retur code_url
